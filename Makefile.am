@@ -18,10 +18,10 @@
 #  distribution); if not, write to the Free Software Foundation, Inc.,
 #  59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-RCCOMPILE = $(WINDRES) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-    $(AM_CPPFLAGS) $(CPPFLAGS)
+SUFFIXES = .rc
 
 AUTOMAKE_OPTIONS = foreign 1.9
+ACLOCAL_AMFLAGS = -I m4
 
 MAINTAINERCLEANFILES = \
 	config.log config.status \
@@ -30,6 +30,8 @@ MAINTAINERCLEANFILES = \
 	$(srcdir)/install-sh $(srcdir)/missing \
 	$(srcdir)/depcomp $(srcdir)/aclocal.m4 \
 	$(srcdir)/config.guess $(srcdir)/config.sub
+
+EXTRA_DIST = .gitignore
 
 bin_PROGRAMS = openvpn-gui
 
@@ -42,29 +44,26 @@ AM_CPPFLAGS = -D_UNICODE
 AM_CFLAGS = -municode
 
 openvpn_gui_RESOURCES = \
-	res/openvpn-gui-res.rc \
-	res/openvpn-gui-res-de.rc \
-	res/openvpn-gui-res-dk.rc \
-	res/openvpn-gui-res-en.rc \
-	res/openvpn-gui-res-es.rc \
-	res/openvpn-gui-res-fi.rc \
-	res/openvpn-gui-res-fr.rc \
-	res/openvpn-gui-res-it.rc \
-	res/openvpn-gui-res-jp.rc \
-	res/openvpn-gui-res-nl.rc \
-	res/openvpn-gui-res-no.rc \
-	res/openvpn-gui-res-pl.rc \
-	res/openvpn-gui-res-pt.rc \
-	res/openvpn-gui-res-se.rc \
-	res/openvpn-gui-res-tr.rc \
+	res/openvpn-gui-res-de.rch \
+	res/openvpn-gui-res-dk.rch \
+	res/openvpn-gui-res-en.rch \
+	res/openvpn-gui-res-es.rch \
+	res/openvpn-gui-res-fi.rch \
+	res/openvpn-gui-res-fr.rch \
+	res/openvpn-gui-res-it.rch \
+	res/openvpn-gui-res-jp.rch \
+	res/openvpn-gui-res-nl.rch \
+	res/openvpn-gui-res-no.rch \
+	res/openvpn-gui-res-pl.rch \
+	res/openvpn-gui-res-pt.rch \
+	res/openvpn-gui-res-se.rch \
+	res/openvpn-gui-res-tr.rch \
 	res/connected.ico \
 	res/connecting.ico \
 	res/disconnected.ico \
 	res/openvpn-gui.ico \
 	res/reconnecting.ico \
 	res/openvpn-gui.manifest
-
-EXTRA_DIST = $(openvpn_gui_RESOURCES)
 
 openvpn_gui_SOURCES = \
 	main.c main.h \
@@ -83,14 +82,21 @@ openvpn_gui_SOURCES = \
 	openvpn_config.c \
 	openvpn_config.h \
 	chartable.h \
-	openvpn-gui-res.h
+	openvpn-gui-res.h \
+	res/openvpn-gui-res.rc \
+	$(openvpn_gui_RESOURCES)
 
-openvpn_gui_LDFLAGS = -mwindows
 openvpn_gui_LDADD = \
-	openvpn-gui-res.o \
 	$(OPENSSL_CRYPTO_LIBS) \
 	-lws2_32 \
 	-lcomctl32
+openvpn_gui_LDFLAGS = \
+	-mwindows
 
-openvpn-gui-res.o: $(openvpn_gui_RESOURCES) $(srcdir)/openvpn-gui-res.h
+$(srcdir)/res/openvpn-gui-res.rc: $(openvpn_gui_RESOURCES) $(srcdir)/openvpn-gui-res.h
+	touch "$(srcdir)/res/openvpn-gui-res.rc"
+
+RCCOMPILE = $(WINDRES) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+	$(AM_CPPFLAGS) $(CPPFLAGS)
+.rc.o:
 	$(RCCOMPILE) -i $< -o $@
